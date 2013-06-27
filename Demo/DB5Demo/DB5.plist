@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Default</key>
+	<dict>
+		<key>backgroundColor</key>
+		<string>708090</string>
+		<key>labelTextColor</key>
+		<string>ececec</string>
+		<key>labelFont</key>
+		<string>Avenir-Medium</string>
+		<key>labelFontSize</key>
+		<integer>18</integer>
+		<key>labelX</key>
+		<integer>44</integer>
+		<key>labelY</key>
+		<integer>300</integer>
+		<key>labelAnimationDuration</key>
+		<real>0.25</real>
+		<key>labelAnimationDelay</key>
+		<real>2</real>
+		<key>labelAnimationCurve</key>
+		<string>easeout</string>
+	</dict>
+	<key>Example Theme</key>
+	<dict>
+		<key>test</key>
+		<string>foo</string>
+	</dict>
+</dict>
+</plist>
