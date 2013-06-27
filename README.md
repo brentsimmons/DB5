@@ -33,3 +33,12 @@ If you ask for a value from a theme other than Default, and that value is not sp
 The demo app is straightforward and small. DB5AppDelegate loads the themes. DB5ViewController shows some example use.
 
 Also, see the Examples folder for the DB5.plist from Vesper.
+
+### Contact
+
+[Brent Simmons](https://github.com/brentsimmons)<br />
+[@brentsimmons](https://twitter.com/brentsimmons)
+
+### License
+
+DB5 is available under the MIT license. See the LICENSE file for details.
