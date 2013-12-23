@@ -12,15 +12,15 @@ There is nothing magical about the code or the system: it’s some simple code p
 
 ### How it works
 
-See the demo app. You include two classes — VSThemeLoader and VSTheme — and DB5.plist. The plist is where you set values.
+See the demo app. You include two classes — `VSThemeLoader` and `VSTheme` — and `DB5.plist`. The plist is where you set values.
 
-At startup you load the file via VSThemeLoader, then access values via methods in VSTheme.
+At startup you load the file via `VSThemeLoader`, then access values via methods in VSTheme.
 
 #### VSTheme methods
 
-Most of the methods are straightforward. -[VSTheme boolForKey:] returns a BOOL, and so on.
+Most of the methods are straightforward. `-[VSTheme boolForKey:]` returns a BOOL, and so on.
 
-Some of the methods require multiple values in the plist file. For instance, -[VSTheme fontForKey:] expects the font name as keyName and the size as keyNameSize. See VSTheme.h for more information about these multiple-key values.
+Some of the methods require multiple values in the plist file. For instance, `-[VSTheme fontForKey:]` expects the font name as `keyName` and the size as `keyNameSize`. See `VSTheme.h` for more information about these multiple-key values.
 
 #### Inheritance
 
@@ -30,9 +30,9 @@ If you ask for a value from a theme other than Default, and that value is not sp
 
 ### Demo app
 
-The demo app is straightforward and small. DB5AppDelegate loads the themes. DB5ViewController shows some example use.
+The demo app is straightforward and small. `DB5AppDelegate` loads the themes. `DB5ViewController` shows some example use.
 
-Also, see the Examples folder for the DB5.plist from Vesper.
+Also, see the Examples folder for the `DB5.plist` from Vesper.
 
 ### Contact
 
