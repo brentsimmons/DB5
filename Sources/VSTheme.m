@@ -8,16 +8,35 @@
 
 #import "VSTheme.h"
 
+#if TARGET_OS_IPHONE
+
+#define VS_COLOR UIColor
+#define VS_IMAGE UIImage
+#define VS_FONT UIFont
+#define VS_EDGE_INSETS UIEdgeInsets
+#define VSEdgeInsetsMake UIEdgeInsetsMake
+
+#else /*Mac*/
+
+#define VS_COLOR NSColor
+#define VS_IMAGE NSImage
+#define VS_FONT NSFont
+#define VS_EDGE_INSETS NSEdgeInsets
+#define VSEdgeInsetsMake NSEdgeInsetsMake
+
+#endif
+
 
 static BOOL stringIsEmpty(NSString *s);
-static UIColor *colorWithHexString(NSString *hexString);
+static VS_COLOR *colorWithHexString(NSString *hexString);
 
 
 @interface VSTheme ()
 
 @property (nonatomic, strong) NSDictionary *themeDictionary;
-@property (nonatomic, strong) NSCache *colorCache;
-@property (nonatomic, strong) NSCache *fontCache;
+@property (nonatomic, strong) NSMutableDictionary *colorCache;
+@property (nonatomic, strong) NSMutableDictionary *colorWithAlphaCache;
+@property (nonatomic, strong) NSMutableDictionary *fontCache;
 
 @end
 
@@ -35,8 +54,8 @@ static UIColor *colorWithHexString(NSString *hexString);
 	
 	_themeDictionary = themeDictionary;
 
-	_colorCache = [NSCache new];
-	_fontCache = [NSCache new];
+	_colorCache = [NSMutableDictionary new];
+	_fontCache = [NSMutableDictionary new];
 
 	return self;
 }
@@ -100,68 +119,89 @@ static UIColor *colorWithHexString(NSString *hexString);
 }
 
 
-- (UIImage *)imageForKey:(NSString *)key {
-	
+- (VS_IMAGE *)imageForKey:(NSString *)key {
+
 	NSString *imageName = [self stringForKey:key];
 	if (stringIsEmpty(imageName))
 		return nil;
-	
-	return [UIImage imageNamed:imageName];
+
+	return [VS_IMAGE imageNamed:imageName];
 }
 
 
-- (UIColor *)colorForKey:(NSString *)key {
+- (VS_COLOR *)colorForKey:(NSString *)key {
 
-	UIColor *cachedColor = [self.colorCache objectForKey:key];
+	VS_COLOR *cachedColor = self.colorCache[key];
 	if (cachedColor != nil)
 		return cachedColor;
-    
-	NSString *colorString = [self stringForKey:key];
-	UIColor *color = colorWithHexString(colorString);
-	if (color == nil)
-		color = [UIColor blackColor];
 
-	[self.colorCache setObject:color forKey:key];
+	NSString *colorString = [self stringForKey:key];
+	VS_COLOR *color = nil;
+	if ([colorString isEqualToString:@"clear"])
+		color = [VS_COLOR clearColor];
+	else
+		color = colorWithHexString(colorString);
+	if (color == nil)
+		color = [VS_COLOR blackColor];
+
+	self.colorCache[key] = color;
 
 	return color;
 }
 
 
-- (UIEdgeInsets)edgeInsetsForKey:(NSString *)key {
+- (VS_COLOR *)colorWithAlphaForKey:(NSString *)key {
+
+	VS_COLOR *cachedColor = self.colorWithAlphaCache[key];
+	if (cachedColor != nil) {
+		return cachedColor;
+	}
+
+	VS_COLOR *color = [self colorForKey:key];
+	CGFloat alpha = [self floatForKey:[key stringByAppendingString:@"Alpha"]];
+	color = [color colorWithAlphaComponent:alpha];
+
+	self.colorWithAlphaCache[key] = color;
+
+	return color;
+}
+
+
+- (VS_EDGE_INSETS)edgeInsetsForKey:(NSString *)key {
 
 	CGFloat left = [self floatForKey:[key stringByAppendingString:@"Left"]];
 	CGFloat top = [self floatForKey:[key stringByAppendingString:@"Top"]];
 	CGFloat right = [self floatForKey:[key stringByAppendingString:@"Right"]];
 	CGFloat bottom = [self floatForKey:[key stringByAppendingString:@"Bottom"]];
 
-	UIEdgeInsets edgeInsets = UIEdgeInsetsMake(top, left, bottom, right);
+	VS_EDGE_INSETS edgeInsets = VSEdgeInsetsMake(top, left, bottom, right);
 	return edgeInsets;
 }
 
 
-- (UIFont *)fontForKey:(NSString *)key {
+- (VS_FONT *)fontForKey:(NSString *)key {
 
-	UIFont *cachedFont = [self.fontCache objectForKey:key];
+	VS_FONT *cachedFont = self.fontCache[key];
 	if (cachedFont != nil)
 		return cachedFont;
-    
+
 	NSString *fontName = [self stringForKey:key];
 	CGFloat fontSize = [self floatForKey:[key stringByAppendingString:@"Size"]];
 
 	if (fontSize < 1.0f)
 		fontSize = 15.0f;
 
-	UIFont *font = nil;
-    
+	VS_FONT *font = nil;
+
 	if (stringIsEmpty(fontName))
-		font = [UIFont systemFontOfSize:fontSize];
+		font = [VS_FONT systemFontOfSize:fontSize];
 	else
-		font = [UIFont fontWithName:fontName size:fontSize];
+		font = [VS_FONT fontWithName:fontName size:fontSize];
 
 	if (font == nil)
-		font = [UIFont systemFontOfSize:fontSize];
-    
-	[self.fontCache setObject:font forKey:key];
+		font = [VS_FONT systemFontOfSize:fontSize];
+
+	self.fontCache[key] = font;
 
 	return font;
 }
@@ -186,6 +226,7 @@ static UIColor *colorWithHexString(NSString *hexString);
 	return size;
 }
 
+#if TARGET_OS_IPHONE
 
 - (UIViewAnimationOptions)curveForKey:(NSString *)key {
     
@@ -218,6 +259,8 @@ static UIColor *colorWithHexString(NSString *hexString);
 	return animationSpecifier;
 }
 
+#endif
+
 
 - (VSTextCaseTransform)textCaseTransformForKey:(NSString *)key {
 
@@ -234,8 +277,40 @@ static UIColor *colorWithHexString(NSString *hexString);
 }
 
 
+- (NSString *)string:(NSString *)s transformedWithTextCaseTransformKey:(NSString *)key {
+
+	VSTextCaseTransform textCaseTransform = [self textCaseTransformForKey:key];
+	NSString *transformedString = nil;
+
+	switch (textCaseTransform) {
+
+		case VSTextCaseTransformNone:
+			transformedString = s;
+			break;
+
+		case VSTextCaseTransformLower:
+			transformedString = [s lowercaseString];
+			break;
+
+		case VSTextCaseTransformUpper:
+			transformedString = [s uppercaseString];
+			break;
+
+		default:
+			break;
+	}
+
+	return transformedString;
+}
+
 @end
 
+NSString *VSThemeSpecifierPlusKey(NSString *specifier, NSString *key) {
+
+	return [NSString stringWithFormat:@"%@.%@", specifier, key];
+}
+
+#if TARGET_OS_IPHONE
 
 @implementation VSTheme (Animations)
 
@@ -256,18 +331,20 @@ static UIColor *colorWithHexString(NSString *hexString);
 
 @end
 
+#endif
+
 
 static BOOL stringIsEmpty(NSString *s) {
 	return s == nil || [s length] == 0;
 }
 
 
-static UIColor *colorWithHexString(NSString *hexString) {
+static VS_COLOR *colorWithHexString(NSString *hexString) {
 
 	/*Picky. Crashes by design.*/
-	
+
 	if (stringIsEmpty(hexString))
-		return [UIColor blackColor];
+		return [VS_COLOR blackColor];
 
 	NSMutableString *s = [hexString mutableCopy];
 	[s replaceOccurrencesOfString:@"#" withString:@"" options:0 range:NSMakeRange(0, [hexString length])];
@@ -282,5 +359,5 @@ static UIColor *colorWithHexString(NSString *hexString) {
 	[[NSScanner scannerWithString:greenString] scanHexInt:&green];
 	[[NSScanner scannerWithString:blueString] scanHexInt:&blue];
 
-	return [UIColor colorWithRed:(CGFloat)red/255.0f green:(CGFloat)green/255.0f blue:(CGFloat)blue/255.0f alpha:1.0f];
+	return [VS_COLOR colorWithRed:(CGFloat)red/255.0f green:(CGFloat)green/255.0f blue:(CGFloat)blue/255.0f alpha:1.0f];
 }

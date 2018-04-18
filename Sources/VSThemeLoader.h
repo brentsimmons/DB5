@@ -13,6 +13,9 @@
 
 @interface VSThemeLoader : NSObject
 
+// Just use -init if you want the default DB5.plist in the normal place.
+- (instancetype)initWithFilepath:(NSString *)f;
+
 @property (nonatomic, strong, readonly) VSTheme *defaultTheme;
 @property (nonatomic, strong, readonly) NSArray *themes;
 

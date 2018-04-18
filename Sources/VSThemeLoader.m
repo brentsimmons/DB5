@@ -19,19 +19,24 @@
 
 @implementation VSThemeLoader
 
+- (instancetype)init {
 
-- (id)init {
-	
-	self = [super init];
-	if (self == nil)
-		return nil;
-	
 	NSString *themesFilePath = [[NSBundle mainBundle] pathForResource:@"DB5" ofType:@"plist"];
-	NSDictionary *themesDictionary = [NSDictionary dictionaryWithContentsOfFile:themesFilePath];
-	
+	return [self initWithFilepath:themesFilePath];
+}
+
+- (instancetype)initWithFilepath:(NSString *)f {
+
+	self = [super init];
+	if (!self) {
+		return nil;
+	}
+
+	NSDictionary *themesDictionary = [NSDictionary dictionaryWithContentsOfFile:f];
+
 	NSMutableArray *themes = [NSMutableArray array];
 	for (NSString *oneKey in themesDictionary) {
-		
+
 		VSTheme *theme = [[VSTheme alloc] initWithDictionary:themesDictionary[oneKey]];
 		if ([[oneKey lowercaseString] isEqualToString:@"default"])
 			_defaultTheme = theme;
@@ -39,13 +44,13 @@
 		[themes addObject:theme];
 	}
 
-    for (VSTheme *oneTheme in themes) { /*All themes inherit from the default theme.*/
+	for (VSTheme *oneTheme in themes) { /*All themes inherit from the default theme.*/
 		if (oneTheme != _defaultTheme)
 			oneTheme.parentTheme = _defaultTheme;
-    }
-    
+	}
+
 	_themes = themes;
-	
+
 	return self;
 }
 
