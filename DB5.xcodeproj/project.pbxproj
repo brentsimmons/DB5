@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		84E9B78E2086F7B800B3FA4D /* DB5.h in Headers */ = {isa = PBXBuildFile; fileRef = 84E9B78D2086F7B800B3FA4D /* DB5.h */; };
-		84E9B7902086F7BE00B3FA4D /* VSTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = 84E9B78F2086F7BE00B3FA4D /* VSTheme.h */; };
+		84E9B78E2086F7B800B3FA4D /* DB5.h in Headers */ = {isa = PBXBuildFile; fileRef = 84E9B78D2086F7B800B3FA4D /* DB5.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		84E9B7902086F7BE00B3FA4D /* VSTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = 84E9B78F2086F7BE00B3FA4D /* VSTheme.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		84E9B7922086F7C400B3FA4D /* VSTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = 84E9B7912086F7C400B3FA4D /* VSTheme.m */; };
-		84E9B7952086F7CA00B3FA4D /* VSThemeLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 84E9B7932086F7CA00B3FA4D /* VSThemeLoader.h */; };
+		84E9B7952086F7CA00B3FA4D /* VSThemeLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 84E9B7932086F7CA00B3FA4D /* VSThemeLoader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		84E9B7962086F7CA00B3FA4D /* VSThemeLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 84E9B7942086F7CA00B3FA4D /* VSThemeLoader.m */; };
 		84F22BDC1B52DC2E000060CE /* DB5.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84F22BD11B52DC2E000060CE /* DB5.framework */; };
 		84F22BE11B52DC2E000060CE /* DB5Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 84F22BE01B52DC2E000060CE /* DB5Tests.m */; };
